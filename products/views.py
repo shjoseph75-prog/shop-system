@@ -3,6 +3,7 @@ from .models import Product, Sale
 from .forms import ProductForm, SaleForm
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count
+from django.utils import timezone
 
 
 
@@ -87,12 +88,22 @@ def sell_product(request):
 @login_required
 def sales_history(request):
     sales = Sale.objects.all().order_by('-date')
+
     total_revenue = Sale.objects.aggregate(Sum('total_price'))['total_price__sum']
+
+    today = timezone.now().date()
+    today_revenue = Sale.objects.filter(date__date=today).aggregate(Sum('total_price'))['total_price__sum'] or 0
+    top_products = Sale.objects.values('product__name').annotate(total_sold=Sum('quantity_sold')).order_by('-total_sold')[:5]
 
     return render(request, 'products/sales.html', {
         "sales": sales,
-        "total_revenue": total_revenue
+        "total_revenue": total_revenue,
+        "today_revenue": today_revenue,
+        "top_products": top_products
+        
     })
+
+
 
 
 
