@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, Sale
 from .forms import ProductForm, SaleForm
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, F
 from django.utils import timezone
 
 
@@ -13,24 +13,26 @@ def home(request):
 
     if request.method == "POST":
         form = ProductForm(request.POST)
+
         if form.is_valid():
             form.save()
             return redirect("/")
         
     products = Product.objects.all()
-    low_stock = Product.objects.filter(quantity__lt=10)
 
     total_products = Product.objects.count()
-    total_sales = Sale.objects.count()
-    total_revenue = Sale.objects.aggregate(Sum('total_price'))['total_price__sum'] or 0
+
+    low_stock_count = Product.objects.filter(quantity__lt=10).count()
+
+    total_stock_value = Product.objects.aggregate(total=Sum('price'))['total'] or 0
+
 
     return render(request, 'products/home.html', {
         "products": products,
         "form": form,
-        "low_stock": low_stock,
         "total_products": total_products,
-        "total_sales": total_sales,
-        "total_revenue": total_revenue
+        "low_stock_count": low_stock_count,
+        "total_stock_value": total_stock_value
 
     })
 
@@ -94,13 +96,19 @@ def sales_history(request):
     today = timezone.now().date()
     today_revenue = Sale.objects.filter(date__date=today).aggregate(Sum('total_price'))['total_price__sum'] or 0
     top_products = Sale.objects.values('product__name').annotate(total_sold=Sum('quantity_sold')).order_by('-total_sold')[:5]
+    total_profit = Sale.objects.aggregate(
+        profit=Sum(
+            (F('product__price') - F('product__cost_price')) * F('quantity_sold')
+        )
+    )['profit'] or 0
 
     return render(request, 'products/sales.html', {
         "sales": sales,
         "total_revenue": total_revenue,
         "today_revenue": today_revenue,
-        "top_products": top_products
-        
+        "top_products": top_products,
+        "total_profit": total_profit
+
     })
 
 

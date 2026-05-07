@@ -9,12 +9,13 @@
     
     <h2>Today Rvenue: {{ today_revenue }} TZS</h2>
     <h2>Total Revenue: {{ total_revenue }} TZS</h2>
+    <h2>Total Profit: {{ total_profit }} TZS</h2>
     <h3>Top Products</h3>
 
     {% for item in top_products %}
         <p>{{ item.product__name }} - {{ item.total_sold }}</p>
     {% endfor %}
-        
+
 
     <a href="/">Back</a>
 

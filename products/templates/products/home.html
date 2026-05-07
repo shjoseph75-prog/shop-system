@@ -15,6 +15,10 @@
         </p>
     {% endfor %}    
     <p>Logged in as: {{ request.user.username }}</p>
+    
+    <h2>Total Products: {{ total_products }}</h2>
+    <h2>Low Stock Products: {{ low_stock_count }}</h2>
+    <h2>Total Stock Value: {{ total_stock_value }} TZS</h2>
 
     <form method="POST">
         {% csrf_token %}
@@ -33,7 +37,7 @@
     </p>
     {% for product in products %}
         <p>
-            {{ product.name }} - {{ product.price }} TZS - Stock: {{ product.quantity }}
+            {{ product.name }} - {{ product.price }} TZS - Stock: {{ product.quantity }} - cost_price: {{ product.cost_price }}
             <a href="{% url 'edit_product' product.id %}">Edit</a> ||
             <a href="{% url 'delete_product' product.id %}">Delete</a>
         </p>
