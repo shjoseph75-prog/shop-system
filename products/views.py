@@ -18,7 +18,13 @@ def home(request):
             form.save()
             return redirect("/")
         
-    products = Product.objects.all()
+    search = request.GET.get('search')
+
+    if search:
+        products = Product.objects.filter(name__icontains=search)
+    else:
+        products = Product.objects.all()
+            
 
     total_products = Product.objects.count()
 
