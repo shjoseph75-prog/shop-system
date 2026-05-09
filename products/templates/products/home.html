@@ -69,6 +69,25 @@
                 Search
             </button>
 
+            <form method="GET" class="mb-3">
+
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                
+                </select>
+                
+                <button type="submit" class="btn btn-primary mt-2">
+                    Filter
+                </button>
+
+            </form>
+
         </div>
     </form>
 
@@ -79,6 +98,7 @@
                 <th>Name</th>
                 <th>Price</th>
                 <th>Quantity</th>
+                <th>Category</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -90,6 +110,7 @@
                 <td>{{ product.name }}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.quantity }}</td>
+                <td>{{ product.category }}</td>
 
                 <td>
                     <a href="{% url 'edit_product' product.id %}" class="btn btn-warning btn-sm">

@@ -86,7 +86,7 @@ import dj_database_url
 if os.environ.get("RENDER"):
     DATABASES = {
         'default': dj_database_url.parse(
-            'postgresql://stationery_lzme_user:YOUR_PASSWORD@dpg-d7rq4fdckfvc73a8eg20-a.oregon-postgres.render.com/stationery_lzme'
+            'postgresql://stationery_lzme_user:6G2JS88yLMO6zOYzpAb9UOSzArmSxaJf.oregon-postgres.render.com/stationery_lzme'
         )
     }
 else:

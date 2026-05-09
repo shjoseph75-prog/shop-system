@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, Sale
+from .models import Product, Sale, Category
 from .forms import ProductForm, SaleForm
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count, F
@@ -24,21 +24,28 @@ def home(request):
         products = Product.objects.filter(name__icontains=search)
     else:
         products = Product.objects.all()
-            
+
+    category_id = request.GET.get('category')
+
+    if category_id:
+        products = products.filter(category_id=category_id)
+
 
     total_products = Product.objects.count()
 
     low_stock_count = Product.objects.filter(quantity__lt=10).count()
 
     total_stock_value = Product.objects.aggregate(total=Sum('price'))['total'] or 0
-
+    
+    categories = Category.objects.all()
 
     return render(request, 'products/home.html', {
         "products": products,
         "form": form,
         "total_products": total_products,
         "low_stock_count": low_stock_count,
-        "total_stock_value": total_stock_value
+        "total_stock_value": total_stock_value,
+        "categories": categories
 
     })
 
